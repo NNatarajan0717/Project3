@@ -32,7 +32,7 @@ Graph::Graph(string type, vector<Movie_Vertex> &movies)
     
     
 
-    if (movies[movies.size() - 1].getEdges().size() == 0)
+    if (movies[movies.size() - 1].getEdges()->size() == 0)
     {
         int k = -1;
         // Ensure no connection with self
@@ -45,58 +45,52 @@ Graph::Graph(string type, vector<Movie_Vertex> &movies)
     }
 }
 
-Movie_Vertex Graph::breadthDepthSearch(Graph graph, Movie_Vertex& root, string title)
+Movie_Vertex* Graph::breadthDepthSearch(Graph* graph, string title)
 {
-    vector<Movie_Vertex> checkedVerts;
-    vector<Movie_Vertex> queuedVerts;
+    vector<Movie_Vertex*> checkedVerts;
+    vector<Movie_Vertex*> queuedVerts;
 
-    checkedVerts.push_back(root);
-    queuedVerts.push_back(root);
+    checkedVerts.push_back(graph->verts[0]);
+    queuedVerts.push_back(graph->verts[0]);
 
     cout << "Traversing... ";
-    bool matchFound = false;
-    while (queuedVerts.size() > 0 && !matchFound)
+    while (queuedVerts.size() > 0)
     {
-        cout << "BOP";
         // Pull movie vertex to be checked
-        Movie_Vertex vert = queuedVerts[0];
+        Movie_Vertex* vert = queuedVerts[0];
         // Remove it from vector of vertices to check
         queuedVerts.erase(queuedVerts.begin());
-
-        cout << vert.getTitle() << " ";
-
+        cout << vert->getTitle() << " ";
+        
         // Get all edges of the currently checked movie vertex
-        for (pair<double, Movie_Vertex> edge : vert.getEdges())
+        for(int i = 0; i < vert->getEdges()->size(); i++)
         {
-            cout << "-Edge: " << edge.second.getTitle() << " |- ";
             // Determine if the adjacent movie has been traversed before
-            bool movieChecked = false;
-            for (Movie_Vertex movie : checkedVerts)
+           bool movieChecked = false;
+            for (Movie_Vertex* movie : checkedVerts)
             {
-                if (movie.getTitle().compare(edge.second.getTitle()) == 0)
+                if (movie->getTitle().compare(vert->getEdges()->at(i).second->getTitle()) == 0)
                 {
                     movieChecked = true;
                 }
             }
-
+            
             // Add this adjacent movie vertex to be checked since it hasn't been traversed
             if (!movieChecked)
             {
-                cout << " ADDED "; 
-                checkedVerts.push_back(edge.second);
-                queuedVerts.push_back(edge.second);
+                checkedVerts.push_back(vert->getEdges()->at(i).second);
+                queuedVerts.push_back(vert->getEdges()->at(i).second);
             }
         }
 
-        if (vert.getTitle().compare(title) == 0)
+        if (vert->getTitle().compare(title) == 0)
         {
-            matchFound = true;
             cout << " Match Found!" << endl;
             return vert;
         }
     }
     cout << "No Matches!" << endl;
-    return Movie_Vertex("DNE","",-1);
+    return nullptr; 
 }
 
 // Connects mainVert to adjVert and stores both into the list of verticies in the graph if they don't already exist
@@ -151,26 +145,25 @@ vector<Movie_Vertex *> Graph::getVerts()
 int main()
 {
     vector<Movie_Vertex> ex;
-    for (int i = 0; i < 25; i++)
+    for (int i = 0; i < 50; i++)
     {
         string movie = "Movie ";
         Movie_Vertex a(movie.append(to_string(i + 1)), "Horror", 1 + ((double)rand() / RAND_MAX) * 9);
         ex.push_back(a);
     }
-
     Graph example("Horror", ex);
 
-    vector<Movie_Vertex *> vertx = example.getVerts();
-
+   vector<Movie_Vertex *> vertx = example.getVerts();
     for (int i = 0; i < vertx.size(); i++)
     {
-        for (int j = 0; j < vertx[i]->getEdges().size(); j++)
+        for (int j = 0; j < vertx[i]->getEdges()->size(); j++)
         {
-            cout << vertx[i]->getTitle() << ": " << vertx[i]->getEdges()[j].second.getTitle() << " : " << to_string(vertx[i]->getEdges()[j].first) << endl;
+           cout << vertx[i]->getTitle() << ": " << vertx[i]->getEdges()->at(j).second->getTitle() << " : " << to_string(vertx[i]->getEdges()->at(j).first) << endl;
         }
     }
     
-    cout << Graph::breadthDepthSearch(example, *vertx[1], ex[10].getTitle()).getTitle() << endl;;
+    Graph* ptr = &example;
+    Graph::breadthDepthSearch(ptr, ex[20].getTitle());
 
     return 0;
 }

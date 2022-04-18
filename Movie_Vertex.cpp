@@ -24,7 +24,7 @@ void Movie_Vertex::addEdge(Movie_Vertex& adjVert)
     //Prevent duplicates
     for(int i = 0; i < adjVerts.size(); i++)
     {
-        if(adjVerts[i].second.getTitle().compare(adjVert.getTitle()) == 0)
+        if(adjVerts[i].second->getTitle().compare(adjVert.getTitle()) == 0)
         {
             return;
         }
@@ -33,7 +33,7 @@ void Movie_Vertex::addEdge(Movie_Vertex& adjVert)
     //Edge weight determined by sum of ratings
     //Higher ratings will have lower weights
     //Maximum rating is 10+10 -> weight of 0.05
-    adjVerts.push_back(make_pair(1/(getRating()+adjVert.getRating()), adjVert));
+    adjVerts.push_back(make_pair(1/(getRating()+adjVert.getRating()), &adjVert));
 }
 
 // Remove the connection between this vertex and adjVert
@@ -41,7 +41,7 @@ void Movie_Vertex::removeEdge(Movie_Vertex& adjVert)
 {
     for (int i = 0; i < adjVerts.size(); i++)
     {
-        if (adjVerts[i].second.getTitle() == adjVert.getTitle())
+        if (adjVerts[i].second->getTitle() == adjVert.getTitle())
         {
             adjVerts.erase(adjVerts.begin() + i);
         }
@@ -49,9 +49,9 @@ void Movie_Vertex::removeEdge(Movie_Vertex& adjVert)
 }
 
 // Return all connections of this vertex
-vector<pair<double, Movie_Vertex>> Movie_Vertex::getEdges()
+vector<pair<double, Movie_Vertex*>>* Movie_Vertex::getEdges()
 {
-    return adjVerts;
+    return &adjVerts;
 }
 
 string Movie_Vertex::getTitle()
