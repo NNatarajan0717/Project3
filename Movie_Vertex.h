@@ -13,7 +13,7 @@ class Movie_Vertex
 private:
     std::vector<std::pair<double, Movie_Vertex>> adjVerts;
     std::string title, genre;
-    double rating, price;
+    double rating;
 
 public:
     Movie_Vertex(std::string title, std::string genre, double rating);
@@ -23,6 +23,5 @@ public:
     std::string getTitle();
     std::string getGenre();
     double getRating();
-    double getPrice();
 };
 #endif

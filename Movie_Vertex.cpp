@@ -64,11 +64,6 @@ string Movie_Vertex::getGenre()
     return genre;
 }
 
-double Movie_Vertex::getPrice()
-{
-    return price;
-}
-
 double Movie_Vertex::getRating()
 {
     return rating;
