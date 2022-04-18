@@ -6,6 +6,7 @@
 //A single graph object is made and multiple verticies/edges are added to it
 
 #include "Movie_Vertex.h"
+#include <iostream>
 
 using namespace std;
 
@@ -23,7 +24,7 @@ void Movie_Vertex::addEdge(Movie_Vertex& adjVert)
     //Prevent duplicates
     for(int i = 0; i < adjVerts.size(); i++)
     {
-        if(adjVerts[i].second.getTitle() == adjVert.getTitle())
+        if(adjVerts[i].second.getTitle().compare(adjVert.getTitle()) == 0)
         {
             return;
         }
@@ -31,7 +32,7 @@ void Movie_Vertex::addEdge(Movie_Vertex& adjVert)
     
     //Edge weight determined by sum of ratings
     //Higher ratings will have lower weights
-    //Maximum rating is 10+10 -> weight of 0.05, minimum is 1+1 = 0.5
+    //Maximum rating is 10+10 -> weight of 0.05
     adjVerts.push_back(make_pair(1/(getRating()+adjVert.getRating()), adjVert));
 }
 

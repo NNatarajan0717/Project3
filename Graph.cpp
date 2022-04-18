@@ -12,18 +12,40 @@ using namespace std;
     {
         this->type = type;
 
-        for(int i = 0; i < movies.size() - 2; i++) 
+        for(int i = 0; i < movies.size() - 1; i++) 
         {
-            for(int j = i + 1; j < movies.size(); j++)
+            if(movies[i + 1].getRating() >= movies[i].getRating() - 0.5 
+                && movies[i + 1].getRating() <= movies[i].getRating() + 0.5) 
             {
-                cout << to_string(i) << " " << to_string(j) << endl;
-                if(movies[j].getRating() >= movies[i].getRating() - 0.5 
-                    && movies[j].getRating() <= movies[i].getRating() + 0.5) 
-                    {
-                        addEdge(movies[i],movies[j]);
-                    }
+                addEdge(movies[i], movies[i + 1]);
+            }
+    
+
+            //Randomly assign an edge if rating falls out of tolerance
+            if(movies[i].getEdges().size() == 0) 
+            {
+                int k = -1;
+                //Ensure no connection with self
+                while(k == -1 || k == i)
+                {
+                    k = (rand() % movies.size() - 1);
+                }
+
+                addEdge(movies[i], movies[k]);
             }
         }
+        
+        if(movies[movies.size() - 1].getEdges().size() == 0) 
+            {
+                int k = -1;
+                //Ensure no connection with self
+                while(k == -1 || k == movies.size() - 1)
+                {
+                    k = (rand() % movies.size() - 1);
+                }
+
+                addEdge(movies[movies.size() - 1], movies[k]);
+            }
     }
     
     //Connects mainVert to adjVert and stores both into the list of verticies in the graph if they don't already exist
@@ -34,13 +56,15 @@ using namespace std;
     
         bool firstExists = false;
         bool secondExists = false;
+        
         for(Movie_Vertex* v : verts)
         {
-            if(mainVert.getTitle() == v->getTitle())
+            
+            if(mainVert.getTitle().compare(v->getTitle()) == 0)
             {
                 firstExists = true;
             }
-            if(adjVert.getTitle() == v->getTitle())
+            if(adjVert.getTitle().compare(v->getTitle()) == 0)
             {
                 secondExists = true;
             }
@@ -50,44 +74,18 @@ using namespace std;
         {
         Movie_Vertex* ptr1 = &mainVert;
         Movie_Vertex* ptr2 = &adjVert;
-        verts.push_back(ptr2);
         verts.push_back(ptr1);
-        }
-        else if(firstExists)
-        {
-        Movie_Vertex* ptr2 = &adjVert;
         verts.push_back(ptr2);
         }
-        else if(secondExists)
+        else if(secondExists && !firstExists)
         {
         Movie_Vertex* ptr1 = &mainVert;
         verts.push_back(ptr1);
         }
-    }
-
-    //Removes the connection between mainVert and adjVert
-    void Graph::removeEdge(Movie_Vertex mainVert, Movie_Vertex adjVert)
-    {
-      mainVert.removeEdge(adjVert);
-      adjVert.removeEdge(mainVert);
-    }
-
-    //Removes vertex vert from the graph
-    void Graph::removeVertex(Movie_Vertex vert)
-    {
-        for(pair<double, Movie_Vertex> edge : vert.getEdges())
+        else if(firstExists && !secondExists)
         {
-            //Access vertex associated with edge
-            edge.second.removeEdge(vert);
-            //Remove both verticies from the edge, thus deleting edge
-            vert.removeEdge(edge.second);
-        }
-        for (int i = 0; i < verts.size(); i++)
-        {
-            if (verts[i]->getTitle() == vert.getTitle())
-            {
-                verts.erase(verts.begin() + i);
-            }
+        Movie_Vertex* ptr2 = &adjVert;
+        verts.push_back(ptr2);
         }
     }
 
@@ -101,27 +99,23 @@ using namespace std;
 //THIS SHOULD BE DELETED FOR THE FINAL IMPLEMENTATION
 int main()
 {
-    Movie_Vertex a("Movie 1", "Horror", 1.2);
-    Movie_Vertex b("Movie 2", "Horror", 1.6);
-    Movie_Vertex c("Movie 3", "Horror", 2);
-    Movie_Vertex d("Movie 4", "Adventure", 1.7);
-    Movie_Vertex e("Movie 5", "Horror", 2.1);
-    Movie_Vertex f("Movie 6", "Horror", 2.5);
     vector<Movie_Vertex> ex;
-    ex.push_back(a);
-    ex.push_back(b);
-    ex.push_back(c);
-    ex.push_back(d);
-    ex.push_back(e);
-    ex.push_back(f);
-    Graph example("Horror", ex);
+    for(int i = 0; i < 100000; i++) {
+        string movie = "Movie ";
+        Movie_Vertex a(movie.append(to_string(i + 1)), "Horror", 1 + ((double)rand() / RAND_MAX) * 9);
+        ex.push_back(a);
+    }
 
-    for(int i = 0; i < example.getVerts().size(); i++)
+    Graph example("Horror", ex);
+    
+    vector<Movie_Vertex*> vertx = example.getVerts();
+
+    for(int i = 0; i < vertx.size(); i++)
     {
-        for(int j = 0; j < example.getVerts()[i]->getEdges().size(); j++)
-        {
-        cout << example.getVerts()[i]->getTitle() << ": " << to_string(example.getVerts()[i]->getEdges()[j].first) << endl;
-        }
+        for(int j = 0; j < vertx[i]->getEdges().size(); j++)
+       {
+           cout << vertx[i]->getTitle() << ": " << vertx[i]->getEdges()[j].second.getTitle() << " : " << to_string(vertx[i]->getEdges()[j].first) << endl;
+       }
     }
     
     return 0;
