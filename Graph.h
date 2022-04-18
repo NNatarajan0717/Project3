@@ -18,7 +18,7 @@ class Graph
     public:
 
         Graph(std::string type, std::vector<Movie_Vertex>& movies);
-        static Movie_Vertex breadthDepthSearch(Graph graph, Movie_Vertex root, std::string title);
+        static Movie_Vertex breadthDepthSearch(Graph graph, Movie_Vertex& root, std::string title);
         void addEdge(Movie_Vertex& mainVert, Movie_Vertex& adjVert);
         void removeEdge(Movie_Vertex mainVert, Movie_Vertex adjVert);
         void removeVertex(Movie_Vertex vert);

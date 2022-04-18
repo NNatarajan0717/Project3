@@ -13,24 +13,24 @@ Graph::Graph(string type, vector<Movie_Vertex> &movies)
 
     for (int i = 0; i < movies.size() - 1; i++)
     {
-        if (movies[i + 1].getRating() >= movies[i].getRating() - 0.5 && movies[i + 1].getRating() <= movies[i].getRating() + 0.5)
+        for(int j = 0; j < movies.size(); j++)
         {
-            addEdge(movies[i], movies[i + 1]);
-        }
-
-        // Randomly assign an edge if rating falls out of tolerance
-        if (movies[i].getEdges().size() == 0)
-        {
-            int k = -1;
-            // Ensure no connection with self
-            while (k == -1 || k == i)
+            if(j == i)
             {
-                k = (rand() % movies.size() - 1);
+                continue;
             }
-
-            addEdge(movies[i], movies[k]);
+            if (movies[j].getRating() >= movies[i].getRating() - 0.5 && movies[j].getRating() <= movies[i].getRating() + 0.5)
+            {
+                addEdge(movies[i], movies[j]);
+            }
+            else 
+            {
+                addEdge(movies[i], movies[i+1]);
+            }
         }
     }
+    
+    
 
     if (movies[movies.size() - 1].getEdges().size() == 0)
     {
@@ -45,7 +45,7 @@ Graph::Graph(string type, vector<Movie_Vertex> &movies)
     }
 }
 
-Movie_Vertex Graph::breadthDepthSearch(Graph graph, Movie_Vertex root, string title)
+Movie_Vertex Graph::breadthDepthSearch(Graph graph, Movie_Vertex& root, string title)
 {
     vector<Movie_Vertex> checkedVerts;
     vector<Movie_Vertex> queuedVerts;
@@ -57,6 +57,7 @@ Movie_Vertex Graph::breadthDepthSearch(Graph graph, Movie_Vertex root, string ti
     bool matchFound = false;
     while (queuedVerts.size() > 0 && !matchFound)
     {
+        cout << "BOP";
         // Pull movie vertex to be checked
         Movie_Vertex vert = queuedVerts[0];
         // Remove it from vector of vertices to check
@@ -67,6 +68,7 @@ Movie_Vertex Graph::breadthDepthSearch(Graph graph, Movie_Vertex root, string ti
         // Get all edges of the currently checked movie vertex
         for (pair<double, Movie_Vertex> edge : vert.getEdges())
         {
+            cout << "-Edge: " << edge.second.getTitle() << " |- ";
             // Determine if the adjacent movie has been traversed before
             bool movieChecked = false;
             for (Movie_Vertex movie : checkedVerts)
@@ -74,13 +76,13 @@ Movie_Vertex Graph::breadthDepthSearch(Graph graph, Movie_Vertex root, string ti
                 if (movie.getTitle().compare(edge.second.getTitle()) == 0)
                 {
                     movieChecked = true;
-                    break;
                 }
             }
 
             // Add this adjacent movie vertex to be checked since it hasn't been traversed
             if (!movieChecked)
             {
+                cout << " ADDED "; 
                 checkedVerts.push_back(edge.second);
                 queuedVerts.push_back(edge.second);
             }
@@ -88,6 +90,7 @@ Movie_Vertex Graph::breadthDepthSearch(Graph graph, Movie_Vertex root, string ti
 
         if (vert.getTitle().compare(title) == 0)
         {
+            matchFound = true;
             cout << " Match Found!" << endl;
             return vert;
         }
@@ -148,7 +151,7 @@ vector<Movie_Vertex *> Graph::getVerts()
 int main()
 {
     vector<Movie_Vertex> ex;
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < 25; i++)
     {
         string movie = "Movie ";
         Movie_Vertex a(movie.append(to_string(i + 1)), "Horror", 1 + ((double)rand() / RAND_MAX) * 9);
@@ -167,7 +170,7 @@ int main()
         }
     }
     
-    Graph::breadthDepthSearch(example, ex[8], ex[11].getTitle());
+    cout << Graph::breadthDepthSearch(example, *vertx[1], ex[10].getTitle()).getTitle() << endl;;
 
     return 0;
 }
