@@ -1,0 +1,12 @@
+#include <string>
+#include <vector>
+#include <iostream>
+//need Movie_Vertex.h and .cpp to function
+void displayMovie(Movie_Vertex movie){
+    cout << "Movie Selected:" << endl;
+    cout << "Title: " << movie.getTitle() << endl;
+    cout << "Genre: " << movie.getGenre() << endl;
+    cout << "Rating: " << movie.getRating() << endl;
+    cout << "Price: " << movie.getPrice() << endl;
+
+}
