@@ -4,24 +4,134 @@ using namespace std;
 
 void quickSort(double arr[], int low, int high);
 double partition(double arr[], int low, int high);
+#include <string>
+#include <vector>
+#include <iostream>
+using namespace std;
+class Movie_Vertex
+{
+private:
+    std::vector<std::pair<double, Movie_Vertex>> adjVerts;
+    std::string title, genre;
+    double rating, price;
+
+public:
+    Movie_Vertex(std::string title, std::string genre, double rating);
+    void addEdge(Movie_Vertex& adjVert);
+    void removeEdge(Movie_Vertex& adjVert);
+    std::vector<std::pair<double, Movie_Vertex>> getEdges();
+    std::string getTitle();
+    std::string getGenre();
+    double getRating();
+    double getPrice();
+};
+
+
+
+// Constructor for Movie_Vertex, stores all information relating to the movie dataset
+Movie_Vertex::Movie_Vertex(string title, string genre, double rating)
+{
+    this->title = title;
+    this->genre = genre;
+    this->rating = rating;
+}
+
+//Adds adjVert to a list of connected verticies, adjVerts
+void Movie_Vertex::addEdge(Movie_Vertex& adjVert)
+{
+    //Prevent duplicates
+    for(int i = 0; i < adjVerts.size(); i++)
+    {
+        if(adjVerts[i].second.getTitle().compare(adjVert.getTitle()) == 0)
+        {
+            return;
+        }
+    }
+
+    //Edge weight determined by sum of ratings
+    //Higher ratings will have lower weights
+    //Maximum rating is 10+10 -> weight of 0.05
+    adjVerts.push_back(make_pair(1/(getRating()+adjVert.getRating()), adjVert));
+}
+
+// Remove the connection between this vertex and adjVert
+void Movie_Vertex::removeEdge(Movie_Vertex& adjVert)
+{
+    for (int i = 0; i < adjVerts.size(); i++)
+    {
+        if (adjVerts[i].second.getTitle() == adjVert.getTitle())
+        {
+            adjVerts.erase(adjVerts.begin() + i);
+        }
+    }
+}
+
+// Return all connections of this vertex
+vector<pair<double, Movie_Vertex>> Movie_Vertex::getEdges()
+{
+    return adjVerts;
+}
+
+string Movie_Vertex::getTitle()
+{
+    return title;
+}
+
+string Movie_Vertex::getGenre()
+{
+    return genre;
+}
+
+double Movie_Vertex::getPrice()
+{
+    return price;
+}
+
+double Movie_Vertex::getRating()
+{
+    return rating;
+}
+
+
+
+void displayMovie(Movie_Vertex movie) {
+    cout << "Movie Selected:" << endl;
+    cout << "Title: " << movie.getTitle() << endl;
+    cout << "Genre: " << movie.getGenre() << endl;
+    cout << "Rating: " << movie.getRating() << endl;
+    cout << "Price: " << movie.getPrice() << endl;
+
+}
 
 int main() {
     queue<double> q;
-    q.push(4.19);
-    q.push(5.0);
-    q.push(4.11);
-    q.push(4.79);
-    q.push(4.37);
-    q.push(4.83);
-    q.push(4.17);
-    q.push(4.44);
-    q.push(4.26);
-    q.push(4.01);
-    double arr[q.size()];
-    int originalSize = q.size();
+    vector<Movie_Vertex> vecOfMovies;
+    Movie_Vertex a("A", "Horror",4.19);
+    Movie_Vertex b("B", "Comedy",5.0);
+    Movie_Vertex c("C", "Action",4.11);
+    Movie_Vertex d("D", "Documentary",4.79);
+    Movie_Vertex e("E", "Comedy",4.37);
+    Movie_Vertex f("F", "Short",4.83);
+    Movie_Vertex g("G", "Horror",4.17);
+    Movie_Vertex h("H", "Action",4.44);
+    Movie_Vertex i("I", "Documentary",4.26);
+    Movie_Vertex j("J", "Horror",4.01);
+    vecOfMovies.push_back(a);
+    vecOfMovies.push_back(b);
+    vecOfMovies.push_back(c);
+    vecOfMovies.push_back(d);
+    vecOfMovies.push_back(e);
+    vecOfMovies.push_back(f);
+    vecOfMovies.push_back(g);
+    vecOfMovies.push_back(h);
+    vecOfMovies.push_back(i);
+    vecOfMovies.push_back(j);
+//RATING
+    double arr[vecOfMovies.size()];
+    int originalSize = vecOfMovies.size();
     for(int i = 0; i < originalSize; i++){
-        arr[i] = q.front();
-        q.pop();
+        arr[i] = vecOfMovies.at(i).getRating();
+        //could do getYear if added or getPrice if parameter added
     }
 
     int m = sizeof(arr)/sizeof(arr[0]);
@@ -29,8 +139,17 @@ int main() {
     int high = m-1;
     quickSort(arr, low, high);
     cout << "organized"<< endl;
+    vector<Movie_Vertex> sortedVector;
     for(int i = 0; i < originalSize; i++){
-        cout<< arr[i] << endl;
+        for(int j = 0; j < originalSize; j++) {
+            if (arr[i] == vecOfMovies.at(j).getRating()){
+                sortedVector.push_back(vecOfMovies.at(j));
+            }
+        }
+    }
+    for(int k = 0; k < sortedVector.size(); k++){
+        cout << k + 1 << ".";
+        cout << sortedVector.at(k).getTitle() << endl;
     }
     return 0;
 }
@@ -68,4 +187,3 @@ double partition(double arr[], int low, int high){
     }
     swap(arr[low],arr[down]);
     return down;
-}
