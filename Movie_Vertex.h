@@ -11,15 +11,15 @@
 class Movie_Vertex
 {
 private:
-    std::vector<Movie_Vertex> adjVerts;
+    std::vector<std::pair<double, Movie_Vertex>> adjVerts;
     std::string title, genre;
     double rating, price;
 
 public:
     Movie_Vertex(std::string title, std::string genre, double rating, double price);
-    void addEdge(Movie_Vertex& adjVert);
+    void addEdge(Movie_Vertex& adjVert, double rating);
     void removeEdge(Movie_Vertex& adjVert);
-    std::vector<Movie_Vertex> getEdges();
+    std::vector<std::pair<double, Movie_Vertex>> getEdges();
     std::string getTitle();
     std::string getGenre();
     double getRating();

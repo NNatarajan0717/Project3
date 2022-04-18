@@ -20,9 +20,10 @@ Movie_Vertex::Movie_Vertex(string title, string genre, double rating, double pri
 }
 
 //Adds adjVert to a list of connected verticies, adjVerts
-void Movie_Vertex::addEdge(Movie_Vertex& adjVert)
+void Movie_Vertex::addEdge(Movie_Vertex& adjVert, double rating)
 {
-    adjVerts.push_back(adjVert);
+    //Each edge has a rating where higher ratings have lower weights
+    adjVerts.push_back(make_pair(1/rating, adjVert));
 }
 
 // Remove the connection between this vertex and adjVert
@@ -30,7 +31,7 @@ void Movie_Vertex::removeEdge(Movie_Vertex& adjVert)
 {
     for (int i = 0; i < adjVerts.size(); i++)
     {
-        if (adjVerts[i].title == adjVert.title)
+        if (adjVerts[i].second.getTitle() == adjVert.getTitle())
         {
             adjVerts.erase(adjVerts.begin() + i);
         }
@@ -38,7 +39,7 @@ void Movie_Vertex::removeEdge(Movie_Vertex& adjVert)
 }
 
 // Return all connections of this vertex
-vector<Movie_Vertex> Movie_Vertex::getEdges()
+vector<pair<double, Movie_Vertex>> Movie_Vertex::getEdges()
 {
     return adjVerts;
 }

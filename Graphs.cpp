@@ -26,8 +26,8 @@ public:
     //Connects mainVert to adjVert and stores both into the list of verticies in the graph if they don't already exist
     void addEdge(Movie_Vertex& mainVert, Movie_Vertex& adjVert)
     {
-        mainVert.addEdge(adjVert);
-        adjVert.addEdge(mainVert);
+        mainVert.addEdge(adjVert, adjVert.getRating());
+        adjVert.addEdge(mainVert, mainVert.getRating());
     
         bool firstExists = false;
         bool secondExists = false;
@@ -72,10 +72,12 @@ public:
     //Removes vertex vert from the graph
     void removeVertex(Movie_Vertex vert)
     {
-        for(Movie_Vertex v : vert.getEdges())
+        for(pair<double, Movie_Vertex> edge : vert.getEdges())
         {
-            v.removeEdge(vert);
-            vert.removeEdge(v);
+            //Access vertex associated with edge
+            edge.second.removeEdge(vert);
+            //Remove both verticies from the edge, thus deleting edge
+            vert.removeEdge(edge.second);
         }
         for (int i = 0; i < verts.size(); i++)
         {
@@ -110,7 +112,7 @@ int main()
         for(int j = 0; j < example.getVerts()[i]->getEdges().size(); j++)
         {
         cout << "i: " << to_string(i) << " j: " << to_string(j) << endl;
-        cout << example.getVerts()[i]->getTitle() << ": " << example.getVerts()[i]->getEdges()[j].getTitle() << endl;
+        cout << example.getVerts()[i]->getTitle() << ": " << to_string(example.getVerts()[i]->getEdges()[j].first) << endl;
         }
     }
     
