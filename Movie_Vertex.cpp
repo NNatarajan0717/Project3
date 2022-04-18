@@ -6,24 +6,33 @@
 //A single graph object is made and multiple verticies/edges are added to it
 
 #include "Movie_Vertex.h"
-#include <vector>
-#include <iostream>
+
 using namespace std;
 
 // Constructor for Movie_Vertex, stores all information relating to the movie dataset
-Movie_Vertex::Movie_Vertex(string title, string genre, double rating, double price)
+Movie_Vertex::Movie_Vertex(string title, string genre, double rating)
 {
     this->title = title;
     this->genre = genre;
     this->rating = rating;
-    this->price = price;
 }
 
 //Adds adjVert to a list of connected verticies, adjVerts
-void Movie_Vertex::addEdge(Movie_Vertex& adjVert, double rating)
+void Movie_Vertex::addEdge(Movie_Vertex& adjVert)
 {
-    //Each edge has a rating where higher ratings have lower weights
-    adjVerts.push_back(make_pair(1/rating, adjVert));
+    //Prevent duplicates
+    for(int i = 0; i < adjVerts.size(); i++)
+    {
+        if(adjVerts[i].second.getTitle() == adjVert.getTitle())
+        {
+            return;
+        }
+    }
+    
+    //Edge weight determined by sum of ratings
+    //Higher ratings will have lower weights
+    //Maximum rating is 10+10 -> weight of 0.05, minimum is 1+1 = 0.5
+    adjVerts.push_back(make_pair(1/(getRating()+adjVert.getRating()), adjVert));
 }
 
 // Remove the connection between this vertex and adjVert
