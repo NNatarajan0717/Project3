@@ -18,7 +18,6 @@ private:
 public:
     Movie_Vertex(std::string title, std::string genre, double rating);
     void addEdge(Movie_Vertex& adjVert);
-    void removeEdge(Movie_Vertex& adjVert);
     std::vector<std::pair<double, Movie_Vertex*>>* getEdges();
     std::string getTitle();
     std::string getGenre();

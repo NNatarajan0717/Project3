@@ -36,18 +36,6 @@ void Movie_Vertex::addEdge(Movie_Vertex& adjVert)
     adjVerts.push_back(make_pair(1/(getRating()+adjVert.getRating()), &adjVert));
 }
 
-// Remove the connection between this vertex and adjVert
-void Movie_Vertex::removeEdge(Movie_Vertex& adjVert)
-{
-    for (int i = 0; i < adjVerts.size(); i++)
-    {
-        if (adjVerts[i].second->getTitle() == adjVert.getTitle())
-        {
-            adjVerts.erase(adjVerts.begin() + i);
-        }
-    }
-}
-
 // Return all connections of this vertex
 vector<pair<double, Movie_Vertex*>>* Movie_Vertex::getEdges()
 {

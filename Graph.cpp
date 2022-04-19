@@ -7,6 +7,7 @@
 
 using namespace std;
 
+//Generate a graph whose edges depend on ratings, close ratings preferred
 Graph::Graph(string type, vector<Movie_Vertex> &movies)
 {
     this->type = type;
@@ -30,8 +31,6 @@ Graph::Graph(string type, vector<Movie_Vertex> &movies)
         }
     }
     
-    
-
     if (movies[movies.size() - 1].getEdges()->size() == 0)
     {
         int k = -1;
@@ -45,12 +44,14 @@ Graph::Graph(string type, vector<Movie_Vertex> &movies)
     }
 }
 
+//Return a random movie
 Movie_Vertex* Graph::randomMovie(Graph* graph)
 {
     int index = rand()%(graph->verts.size() + 1);
     return Graph::findTitleBDS(graph, graph->verts[index]->getTitle());
 }
 
+//Find a title using BDS algorithm
 Movie_Vertex* Graph::findTitleBDS(Graph* graph, string title)
 {
     vector<Movie_Vertex*> checkedVerts;
@@ -99,6 +100,7 @@ Movie_Vertex* Graph::findTitleBDS(Graph* graph, string title)
     return nullptr; 
 }
 
+//Find all movies within a rating of min-max using BDS
 vector<Movie_Vertex*> Graph::findRatingBDS(Graph* graph, double min, double max)
 {
     vector<Movie_Vertex*> checkedVerts;
@@ -148,6 +150,7 @@ vector<Movie_Vertex*> Graph::findRatingBDS(Graph* graph, double min, double max)
     return matches; 
 }
 
+//Find all movies of a certain genre
 vector<Movie_Vertex*> Graph::findGenreBDS(Graph* graph, string genre)
 {
     vector<Movie_Vertex*> checkedVerts;
@@ -201,12 +204,14 @@ vector<Movie_Vertex*> Graph::findGenreBDS(Graph* graph, string genre)
 // Connects mainVert to adjVert and stores both into the list of verticies in the graph if they don't already exist
 void Graph::addEdge(Movie_Vertex &mainVert, Movie_Vertex &adjVert)
 {
+    //Bi-directional
     mainVert.addEdge(adjVert);
     adjVert.addEdge(mainVert);
 
     bool firstExists = false;
     bool secondExists = false;
 
+    //Prevent duplicates from being logged
     for (Movie_Vertex *v : verts)
     {
 
