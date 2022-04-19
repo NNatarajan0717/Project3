@@ -1,0 +1,21 @@
+void heapify(Movie_Vertex* arr, int x, int j){
+    int max = j;
+    int left = 2*j+1;
+    int right = 2*j+2;
+    if(arr[left].getRating() > arr[max].getRating() && left < x){
+        max = left;
+    }
+    if(arr[right].getRating() > arr[max].getRating() && right < x){
+        max = right;
+    }
+    if(max != j){
+        swap(arr[j], arr[max]);
+        heapify(arr,x,max);
+    }
+}
+
+void createHeap(Movie_Vertex* arr, int x){
+    int firstIndex = (x/2)-1;
+    for(int j = firstIndex; j >= 0; j--){
+        heapify(arr,x,j);
+    }
