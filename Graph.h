@@ -21,6 +21,7 @@ class Graph
         static Movie_Vertex* findTitleBDS(Graph* graph, std::string title);
         static Movie_Vertex* randomMovie(Graph* graph);
         static std::vector<Movie_Vertex*> findRatingBDS(Graph* graph, double min, double max);
+        static std::vector<Movie_Vertex*> findGenreBDS(Graph* graph, std::string genre);
         void addEdge(Movie_Vertex& mainVert, Movie_Vertex& adjVert);
         std::vector<Movie_Vertex*> getVerts();
 };

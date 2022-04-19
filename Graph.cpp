@@ -148,6 +148,55 @@ vector<Movie_Vertex*> Graph::findRatingBDS(Graph* graph, double min, double max)
     return matches; 
 }
 
+vector<Movie_Vertex*> Graph::findGenreBDS(Graph* graph, string genre)
+{
+    vector<Movie_Vertex*> checkedVerts;
+    vector<Movie_Vertex*> queuedVerts;
+    vector<Movie_Vertex*> matches;
+
+    checkedVerts.push_back(graph->verts[0]);
+    queuedVerts.push_back(graph->verts[0]);
+
+    cout << "Traversing... ";
+    while (queuedVerts.size() > 0)
+    {
+        // Pull movie vertex to be checked
+        Movie_Vertex* vert = queuedVerts[0];
+        // Remove it from vector of vertices to check
+        queuedVerts.erase(queuedVerts.begin());
+        cout << vert->getTitle() << " ";
+        
+        // Get all edges of the currently checked movie vertex
+        for(int i = 0; i < vert->getEdges()->size(); i++)
+        {
+            // Determine if the adjacent movie has been traversed before
+           bool movieChecked = false;
+            for (Movie_Vertex* movie : checkedVerts)
+            {
+                if (movie->getTitle().compare(vert->getEdges()->at(i).second->getTitle()) == 0)
+                {
+                    movieChecked = true;
+                }
+            }
+            
+            // Add this adjacent movie vertex to be checked since it hasn't been traversed
+            if (!movieChecked)
+            {
+                checkedVerts.push_back(vert->getEdges()->at(i).second);
+                queuedVerts.push_back(vert->getEdges()->at(i).second);
+            }
+        }
+
+        if (vert->getGenre().compare(genre) == 0)
+        {
+            cout << " Match Found!" << endl;
+            matches.push_back(vert);
+        }
+    }
+    
+    return matches; 
+}
+
 
 // Connects mainVert to adjVert and stores both into the list of verticies in the graph if they don't already exist
 void Graph::addEdge(Movie_Vertex &mainVert, Movie_Vertex &adjVert)
