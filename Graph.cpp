@@ -45,7 +45,13 @@ Graph::Graph(string type, vector<Movie_Vertex> &movies)
     }
 }
 
-Movie_Vertex* Graph::breadthDepthSearch(Graph* graph, string title)
+Movie_Vertex* Graph::randomMovie(Graph* graph)
+{
+    int index = rand()%(graph->verts.size() + 1);
+    return Graph::findTitleBDS(graph, graph->verts[index]->getTitle());
+}
+
+Movie_Vertex* Graph::findTitleBDS(Graph* graph, string title)
 {
     vector<Movie_Vertex*> checkedVerts;
     vector<Movie_Vertex*> queuedVerts;
@@ -93,6 +99,56 @@ Movie_Vertex* Graph::breadthDepthSearch(Graph* graph, string title)
     return nullptr; 
 }
 
+vector<Movie_Vertex*> Graph::findRatingBDS(Graph* graph, double min, double max)
+{
+    vector<Movie_Vertex*> checkedVerts;
+    vector<Movie_Vertex*> queuedVerts;
+    vector<Movie_Vertex*> matches;
+
+    checkedVerts.push_back(graph->verts[0]);
+    queuedVerts.push_back(graph->verts[0]);
+
+    cout << "Traversing... ";
+    while (queuedVerts.size() > 0)
+    {
+        // Pull movie vertex to be checked
+        Movie_Vertex* vert = queuedVerts[0];
+        // Remove it from vector of vertices to check
+        queuedVerts.erase(queuedVerts.begin());
+        cout << vert->getTitle() << " ";
+        
+        // Get all edges of the currently checked movie vertex
+        for(int i = 0; i < vert->getEdges()->size(); i++)
+        {
+            // Determine if the adjacent movie has been traversed before
+           bool movieChecked = false;
+            for (Movie_Vertex* movie : checkedVerts)
+            {
+                if (movie->getTitle().compare(vert->getEdges()->at(i).second->getTitle()) == 0)
+                {
+                    movieChecked = true;
+                }
+            }
+            
+            // Add this adjacent movie vertex to be checked since it hasn't been traversed
+            if (!movieChecked)
+            {
+                checkedVerts.push_back(vert->getEdges()->at(i).second);
+                queuedVerts.push_back(vert->getEdges()->at(i).second);
+            }
+        }
+
+        if (vert->getRating() >= min && vert->getRating() <= max)
+        {
+            cout << " Match Found!" << endl;
+            matches.push_back(vert);
+        }
+    }
+    
+    return matches; 
+}
+
+
 // Connects mainVert to adjVert and stores both into the list of verticies in the graph if they don't already exist
 void Graph::addEdge(Movie_Vertex &mainVert, Movie_Vertex &adjVert)
 {
@@ -138,32 +194,4 @@ void Graph::addEdge(Movie_Vertex &mainVert, Movie_Vertex &adjVert)
 vector<Movie_Vertex *> Graph::getVerts()
 {
     return verts;
-}
-
-// Quick example made to show how the graph handler works
-// THIS SHOULD BE DELETED FOR THE FINAL IMPLEMENTATION
-int main()
-{
-    vector<Movie_Vertex> ex;
-    for (int i = 0; i < 50; i++)
-    {
-        string movie = "Movie ";
-        Movie_Vertex a(movie.append(to_string(i + 1)), "Horror", 1 + ((double)rand() / RAND_MAX) * 9);
-        ex.push_back(a);
-    }
-    Graph example("Horror", ex);
-
-   vector<Movie_Vertex *> vertx = example.getVerts();
-    for (int i = 0; i < vertx.size(); i++)
-    {
-        for (int j = 0; j < vertx[i]->getEdges()->size(); j++)
-        {
-           cout << vertx[i]->getTitle() << ": " << vertx[i]->getEdges()->at(j).second->getTitle() << " : " << to_string(vertx[i]->getEdges()->at(j).first) << endl;
-        }
-    }
-    
-    Graph* ptr = &example;
-    Graph::breadthDepthSearch(ptr, ex[20].getTitle());
-
-    return 0;
 }

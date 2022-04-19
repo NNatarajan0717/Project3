@@ -18,10 +18,10 @@ class Graph
     public:
 
         Graph(std::string type, std::vector<Movie_Vertex>& movies);
-        static Movie_Vertex* breadthDepthSearch(Graph* graph, std::string title);
+        static Movie_Vertex* findTitleBDS(Graph* graph, std::string title);
+        static Movie_Vertex* randomMovie(Graph* graph);
+        static std::vector<Movie_Vertex*> findRatingBDS(Graph* graph, double min, double max);
         void addEdge(Movie_Vertex& mainVert, Movie_Vertex& adjVert);
-        void removeEdge(Movie_Vertex mainVert, Movie_Vertex adjVert);
-        void removeVertex(Movie_Vertex vert);
         std::vector<Movie_Vertex*> getVerts();
 };
 
