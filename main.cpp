@@ -6,6 +6,14 @@
 #include <sstream>
 using namespace std;
 
+void displayMovie(Movie_Vertex movie) {
+    cout << "Movie Selected:" << endl;
+    cout << "Title: " << movie.getTitle() << endl;
+    cout << "Genre: " << movie.getGenre() << endl;
+    cout << "Rating: " << movie.getRating() << endl;
+
+}
+
 int main()
 {
     
@@ -23,7 +31,7 @@ int main()
     vector<Movie_Vertex> movieList;
 
     /*going through input files line by line, still have to create graph object in order to store movie vertices*/
-    for (int i = 0; i < 10; i++) 
+    for (int i = 0; i < 50; i++) 
     {
 
         //get index of movie
@@ -72,21 +80,23 @@ int main()
 
     }
 
-    Graph graph("", movieList);
-
-    Graph* ptr = &graph;
-
-    //cout << graph.breadthDepthSearch(ptr, "The Ball Game")->getTitle();
-
     //format for user input
     cout << "Welcome to the Movie Carosel!\n\n";
 
     bool movieFound = false;
 
+    vector<Movie_Vertex> reset = movieList;
+
     while (!movieFound) 
     {
+
+        cout << "Search Space Size: " << movieList.size() << endl;
+
+        Graph graph("", movieList);
+
+        Graph* ptr = &graph;
     
-        cout << "Choose an option to start:\n\nSearch by rating (enter: 1)\nSearch by genre (enter: 2)\nSearch by name (enter: 3)\nSearch for a random movie (enter: 4)\noption:";
+        cout << "Choose an option to start:\n\nSearch by rating (enter: 1)\nSearch by genre (enter: 2)\nSearch by name (enter: 3)\nSearch for a random movie (enter: 4)\nReset Search Space\noption:";
         
         string searchChoice;
        
@@ -100,7 +110,46 @@ int main()
             getline(cin, upperBound);
             cout << "Enter Lowerbound (0.0 - 10.0): ";
             getline(cin, lowerBound);
-            graph.findRatingBDS(ptr, stod(lowerBound), stod(upperBound));
+
+            vector<Movie_Vertex*> updatedMovieList = graph.findRatingBDS(ptr, stod(lowerBound), stod(upperBound));
+            cout << "\n\nMovie titles found with a rating between " << lowerBound << " - " << upperBound << ":" << endl;
+
+            for (int i = 0; i < updatedMovieList.size(); i++) 
+            {
+            
+                cout << updatedMovieList.at(i)->getTitle() << endl;
+
+            }
+
+            cout << "\nWould you like to continue searching among these titles? (y / n)" << endl;
+            string answer;
+            getline(cin, answer);
+            if (answer == "y") 
+            {
+            
+                for (int i = 0; i < updatedMovieList.size(); i++) 
+                {
+                
+                    movieList.at(i) = *updatedMovieList.at(i);
+
+                }
+
+                unsigned int size = movieList.size();
+
+                for (int i = updatedMovieList.size(); i < size; i++)
+                {
+
+                    movieList.pop_back();
+
+                }
+
+            }
+            else 
+            {
+            
+                continue;
+
+            }
 
         }
         else if (stoi(searchChoice) == 2) 
@@ -109,7 +158,45 @@ int main()
             string genre;
             cout << "\nEnter Genre: ";
             getline(cin, genre);
-            graph.findGenreBDS(ptr, genre);
+            vector<Movie_Vertex*> updatedMovieList = graph.findGenreBDS(ptr, genre);
+            cout << "\n\nMovie titles under " << genre << ":" << endl;
+
+            for (int i = 0; i < updatedMovieList.size(); i++)
+            {
+
+                cout << updatedMovieList.at(i)->getTitle() << endl;
+
+            }
+
+            cout << "\nWould you like to continue searching among these titles? (y / n)" << endl;
+            string answer;
+            getline(cin, answer);
+            if (answer == "y")
+            {
+
+                for (int i = 0; i < updatedMovieList.size(); i++)
+                {
+
+                    movieList.at(i) = *updatedMovieList.at(i);
+
+                }
+
+                unsigned int size = movieList.size();
+
+                for (int i = updatedMovieList.size(); i < size; i++)
+                {
+
+                    movieList.pop_back();
+
+                }
+
+            }
+            else
+            {
+
+                continue;
+
+            }
 
         }
         else if (stoi(searchChoice) == 3) 
@@ -118,14 +205,63 @@ int main()
             cout << "\nEnter Movie Name:";
             string movieTitle;
             getline(cin, movieTitle);
-            graph.findTitleBDS(ptr, movieTitle);
+            Movie_Vertex *movie = graph.findTitleBDS(ptr, movieTitle);
+            if (movie != nullptr) 
+            {
+            
+                displayMovie(*movie);
+
+                cout << "Is this the movie you wanted? (y / n)" << endl;
+                string answer;
+                getline(cin, answer);
+                if (answer == "y")
+                {
+
+                    movieFound = true;
+
+                }
+
+            }
+            else 
+            {
+            
+                continue;
+
+            }
             
         }
         else if (stoi(searchChoice) == 4) 
         {
 
-            graph.randomMovie(ptr);
+            Movie_Vertex* movie = graph.randomMovie(ptr);
+            if (movie != nullptr)
+            {
 
+                displayMovie(*movie);
+                
+                cout << "\nIs this the movie you wanted? (y / n)" << endl;
+                string answer;
+                getline(cin, answer);
+                if (answer == "y")
+                {
+
+                    movieFound = true;
+
+                }
+
+            }
+            else
+            {
+
+                continue;
+
+            }
+
+
+        }
+        else if (stoi(searchChoice) == 5)
+        {
+        movieList = reset;
         }
         else 
         {
@@ -134,17 +270,9 @@ int main()
 
         }
 
-        cout << "Is this the movie you wanted? (y / n)" << endl;
-        string answer;
-        getline(cin, answer);
-        if (answer == "y") 
-        {
-        
-            movieFound = true;
-
-        }
-
     }
+
+    cout << "\nThanks for riding the movie carosel!" << endl;
 
     return 0;
 
