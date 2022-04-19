@@ -1,0 +1,21 @@
+void heapify(vector<Movie_Vertex> movies, int x, int j) {
+    int max = j;
+    int left = 2*j+1;
+    int right = 2*j+2;
+    if(movies.at(left).getRating() > movies.at(max).getRating() && left < x){
+        max = left;
+    }
+    if(movies.at(right).getRating() > movies.at(max).getRating() && right < x){
+        max = right;
+    }
+    if(max != j){
+        swap(movies.at(j), movies.at(max));
+        heapify(movies,x,max);
+    }
+}
+void createHeap(vector<Movie_Vertex> movies, int x) {
+    int firstIndex = (x/2)-1;
+    for(int j = firstIndex; j >= 0; j--){
+        heapify(movies,x,j);
+    }
+}
