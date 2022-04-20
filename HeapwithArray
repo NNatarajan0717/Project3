@@ -137,3 +137,152 @@ vector<Movie_Vertex*> findRatingBDS(Movie_Vertex* arr, double min, double max, i
     
     return matches; 
 }
+
+vector<Movie_Vertex*> findGenreBDS(Movie_Vertex* arr, string genre, int size) {
+    vector<Movie_Vertex*> checkedVerts;
+    vector<Movie_Vertex*> queuedVerts;
+    vector<Movie_Vertex*> matches;
+
+    checkedVerts.push_back(&arr[0]);
+    queuedVerts.push_back(&arr[0]);
+
+    cout << "Traversing... ";
+    while (queuedVerts.size() > 0)
+    {
+        // Pull movie vertex to be checked
+        Movie_Vertex* vert = queuedVerts[0];
+        // Remove it from vector of vertices to check
+        queuedVerts.erase(queuedVerts.begin());
+        cout << vert->getTitle() << " ";
+        
+        int idx;
+        // Get all edges of the currently checked movie vertex
+        for(int i = 0; i < size; i++)
+        {
+            if(arr[i].getTitle().compare(vert->getTitle()) == 0)
+            {
+                idx = i;
+                break;
+            }
+        }
+
+            // Determine if the adjacent movie has been traversed before
+           bool leftChecked = false;
+           bool rightChecked = false;
+            for (Movie_Vertex* movie : checkedVerts)
+            {
+                if(idx * 2 < size)
+                {
+                    if (movie->getTitle().compare(arr[idx*2+2].getTitle()) == 0 || idx * 2 > size)
+                    {
+                    rightChecked = true;
+                    }
+                if(movie->getTitle().compare(arr[idx*2+1].getTitle()) == 0 || idx * 2 > size)
+                    {
+                    leftChecked = true;
+                    } 
+                }
+                else
+                {
+                    rightChecked = true;
+                    leftChecked = true;
+                }
+
+            }
+            
+            // Add this adjacent movie vertex to be checked since it hasn't been traversed
+            if (!rightChecked)
+            {
+                checkedVerts.push_back(&arr[idx*2+2]);
+                queuedVerts.push_back(&arr[idx*2+2]);
+            }
+            if(!leftChecked)
+            {
+                checkedVerts.push_back(&arr[idx*2+1]);
+                queuedVerts.push_back(&arr[idx*2+1]);
+            }
+
+        cout << "SIZE: " << queuedVerts.size() << endl;
+        if (vert->getGenre().compare(genre) == 0)
+        {
+            cout << " Match Found!" << endl;
+            matches.push_back(vert);
+        }
+    }
+    
+    return matches; 
+}
+
+Movie_Vertex* findTitleBDS(Movie_Vertex* arr, string title, int size) {
+    vector<Movie_Vertex*> checkedVerts;
+    vector<Movie_Vertex*> queuedVerts;
+
+    checkedVerts.push_back(&arr[0]);
+    queuedVerts.push_back(&arr[0]);
+
+    cout << "Traversing... ";
+    while (queuedVerts.size() > 0)
+    {
+        // Pull movie vertex to be checked
+        Movie_Vertex* vert = queuedVerts[0];
+        // Remove it from vector of vertices to check
+        queuedVerts.erase(queuedVerts.begin());
+        cout << vert->getTitle() << " ";
+        
+        int idx;
+        // Get all edges of the currently checked movie vertex
+        for(int i = 0; i < size; i++)
+        {
+            if(arr[i].getTitle().compare(vert->getTitle()) == 0)
+            {
+                idx = i;
+                break;
+            }
+        }
+
+            // Determine if the adjacent movie has been traversed before
+           bool leftChecked = false;
+           bool rightChecked = false;
+            for (Movie_Vertex* movie : checkedVerts)
+            {
+                if(idx * 2 < size)
+                {
+                    if (movie->getTitle().compare(arr[idx*2+2].getTitle()) == 0 || idx * 2 > size)
+                    {
+                    rightChecked = true;
+                    }
+                if(movie->getTitle().compare(arr[idx*2+1].getTitle()) == 0 || idx * 2 > size)
+                    {
+                    leftChecked = true;
+                    } 
+                }
+                else
+                {
+                    rightChecked = true;
+                    leftChecked = true;
+                }
+
+            }
+            
+            // Add this adjacent movie vertex to be checked since it hasn't been traversed
+            if (!rightChecked)
+            {
+                checkedVerts.push_back(&arr[idx*2+2]);
+                queuedVerts.push_back(&arr[idx*2+2]);
+            }
+            if(!leftChecked)
+            {
+                checkedVerts.push_back(&arr[idx*2+1]);
+                queuedVerts.push_back(&arr[idx*2+1]);
+            }
+
+        cout << "SIZE: " << queuedVerts.size() << endl;
+        if (vert->getGenre().compare(title) == 0)
+        {
+            cout << " Match Found!" << endl;
+            return vert;
+        }
+    }
+    
+    return nullptr; 
+}
