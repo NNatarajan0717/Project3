@@ -334,13 +334,8 @@ int main()
     bool movieFound = false;
 
     vector<Movie_Vertex> reset = movieList;
-
-    while (!movieFound)
-    {
-
-        cout << "Search Space Size: " << movieList.size() << endl;
-        
-        Movie_Vertex* heap[100000];
+    
+    Movie_Vertex* heap[100000];
 
         for (int i = 0; i < 100000; i++) 
         {
@@ -355,6 +350,11 @@ int main()
         }
 
         createHeap(*heap, 100000);
+
+    while (!movieFound)
+    {
+
+        cout << "Search Space Size: " << movieList.size() << endl;
 
         Graph graph("", movieList);
 
