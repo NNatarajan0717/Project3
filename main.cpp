@@ -279,7 +279,7 @@ int main()
     vector<Movie_Vertex> movieList;
 
     /*going through input files line by line, still have to create graph object in order to store movie vertices*/
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 100000; i++)
     {
 
         //get index of movie
@@ -340,9 +340,9 @@ int main()
 
         cout << "Search Space Size: " << movieList.size() << endl;
         
-        Movie_Vertex* heap[100];
+        Movie_Vertex* heap[100000];
 
-        for (int i = 0; i < 100; i++) 
+        for (int i = 0; i < 100000; i++) 
         {
 
             if (i < movieList.size()) 
@@ -354,7 +354,7 @@ int main()
 
         }
 
-        createHeap(*heap, 100);
+        createHeap(*heap, 100000);
 
         Graph graph("", movieList);
 
@@ -362,25 +362,30 @@ int main()
 
         cout << "\nChoose an option to start:\n\nSearch by rating (enter: 1)\nSearch by genre (enter: 2)\nSearch by name (enter: 3)\nSearch for a random movie (enter: 4)\nReset Search Space\noption:";
 
+        //stores user input choice option
         string searchChoice;
 
         getline(cin, searchChoice);
 
+        //search by Rating
         if (stoi(searchChoice) == 1)
         {
 
+            //upper and lower bound ranges are given by user input
             string upperBound, lowerBound;
             cout << "\nEnter Upperbound (0.0 - 10.0): ";
             getline(cin, upperBound);
             cout << "Enter Lowerbound (0.0 - 10.0): ";
             getline(cin, lowerBound);
 
+            //run heap search and display time taken
             auto heapStart = chrono::steady_clock::now();
-            findRatingBDS(*heap, stod(lowerBound), stod(upperBound), 100);
+            findRatingBDS(*heap, stod(lowerBound), stod(upperBound), 100000);
             auto heapEnd = chrono::steady_clock::now();
 
             cout << "\nTime taken for Heap Search: " << chrono::duration_cast<chrono::nanoseconds>(heapEnd - heapStart).count() << " ns\n";
 
+            //run graph depth-first-search and display time taken
             auto graphStart = chrono::steady_clock::now();
             vector<Movie_Vertex*> updatedMovieList = graph.findRatingBDS(ptr, stod(lowerBound), stod(upperBound));
             auto graphEnd = chrono::steady_clock::now();
@@ -389,6 +394,7 @@ int main()
 
             cout << "\nMovie titles found with a rating between " << lowerBound << " - " << upperBound << ":" << endl;
 
+            //Display Updated Search Space based on Search by Genre y Rating
             for (int i = 0; i < updatedMovieList.size(); i++)
             {
 
@@ -399,6 +405,7 @@ int main()
             cout << "\nWould you like to continue searching among these titles? (y / n)" << endl;
             string answer;
             getline(cin, answer);
+            //Shortens search base to movies found by the Search By Rating function
             if (answer == "y")
             {
 
@@ -427,6 +434,7 @@ int main()
             }
 
         }
+        //Search By Genre
         else if (stoi(searchChoice) == 2)
         {
 
@@ -434,12 +442,14 @@ int main()
             cout << "\nEnter Genre: ";
             getline(cin, genre);
 
+            //Run Heap Search and Display time taken
             auto heapStart = chrono::steady_clock::now();
-            findGenreBDS(*heap, genre, 100);
+            findGenreBDS(*heap, genre, 100000);
             auto heapEnd = chrono::steady_clock::now();
 
             cout << "\nTime taken for Heap Search: " << chrono::duration_cast<chrono::nanoseconds>(heapEnd - heapStart).count() << " ns\n";
 
+            //Run Depth First Search on Graph and display time taken
             auto graphStart = chrono::steady_clock::now();
             vector<Movie_Vertex*> updatedMovieList = graph.findGenreBDS(ptr, genre);
             auto graphEnd = chrono::steady_clock::now();
@@ -448,6 +458,7 @@ int main()
 
             cout << "\n\nMovie titles under " << genre << ":" << endl;
 
+            //Display movies found under the Genre Specified
             for (int i = 0; i < updatedMovieList.size(); i++)
             {
 
@@ -458,6 +469,7 @@ int main()
             cout << "\nWould you like to continue searching among these titles? (y / n)" << endl;
             string answer;
             getline(cin, answer);
+            //Shorten search space to the movies founder under this genre
             if (answer == "y")
             {
 
@@ -486,6 +498,7 @@ int main()
             }
 
         }
+        //Search By Name
         else if (stoi(searchChoice) == 3)
         {
 
@@ -493,23 +506,27 @@ int main()
             string movieTitle;
             getline(cin, movieTitle);
 
+            //Run Heap Search and Display Time taken
             auto heapStart = chrono::steady_clock::now();
-            findTitleBDS(*heap, movieTitle, 100);
+            findTitleBDS(*heap, movieTitle, 100000);
             auto heapEnd = chrono::steady_clock::now();
 
             cout << "\nTime taken for Heap Search: " << chrono::duration_cast<chrono::nanoseconds>(heapEnd - heapStart).count() << " ns\n";
 
+            //Run Depth First Search on Graph and Display time taken
             auto graphStart = chrono::steady_clock::now();
             Movie_Vertex* movie = graph.findTitleBDS(ptr, movieTitle);
             auto graphEnd = chrono::steady_clock::now();
 
             cout << "\nTime taken for Graph Search: " << chrono::duration_cast<chrono::nanoseconds>(graphEnd - graphStart).count() << " ns\n";
 
+            //If movie title is found, display its information
             if (movie != nullptr)
             {
 
                 displayMovie(*movie);
 
+                //If movie found is the movie that the movie wants, terminate the program
                 cout << "Is this the movie you wanted? (y / n)" << endl;
                 string answer;
                 getline(cin, answer);
@@ -529,21 +546,25 @@ int main()
             }
 
         }
+        //Search For Random Movie
         else if (stoi(searchChoice) == 4)
         {
 
+            //Run Depth First Search and display time taken
             auto graphStart = chrono::steady_clock::now();
             Movie_Vertex* movie = graph.randomMovie(ptr);
             auto graphEnd = chrono::steady_clock::now();
             
+            //Run Heap Search and display time taken
             auto heapStart = chrono::steady_clock::now();
-            findTitleBDS(*heap, movie->getTitle(), 100);
+            findTitleBDS(*heap, movie->getTitle(), 100000);
             auto heapEnd = chrono::steady_clock::now();
 
             cout << "\nTime taken for Heap Search: " << chrono::duration_cast<chrono::nanoseconds>(heapEnd - heapStart).count() << " ns\n";
             cout << "\nTime taken for Graph Search: " << chrono::duration_cast<chrono::nanoseconds>(graphEnd - graphStart).count() << " ns\n";
 
 
+            //Display contents of Random Movie
             if (movie != nullptr)
             {
 
@@ -552,6 +573,7 @@ int main()
                 cout << "\nIs this the movie you wanted? (y / n)" << endl;
                 string answer;
                 getline(cin, answer);
+                //if the movie selected is the movie wanted by the user, terminate the program
                 if (answer == "y")
                 {
 
@@ -569,10 +591,12 @@ int main()
 
 
         }
+        //Reset Search Space
         else if (stoi(searchChoice) == 5)
         {
             movieList = reset;
         }
+        //Alert user that selection choice is invalid
         else
         {
 
