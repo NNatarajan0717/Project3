@@ -6,10 +6,11 @@ using namespace std;
 
 void heapify(Movie_Vertex * arr, int x, int j);
 void createHeap(Movie_Vertex * arr, int x);
+vector<Movie_Vertex*> findRatingBDS(Movie_Vertex* arr, double min, double max, int size);
 
 int main() {
   vector < Movie_Vertex > ex;
-  for (int i = 0; i < 50; i++) {
+  for (int i = 0; i < 20; i++) {
     string movie = "Movie ";
     Movie_Vertex a(movie.append(to_string(i + 1)), "Horror", 1 + ((double) rand() / RAND_MAX) * 9);
     ex.push_back(a);
@@ -20,15 +21,19 @@ int main() {
     arr[i] = & ex.at(i);
   }
 
+
   for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); i++) {
     cout << arr[i] -> getTitle() << " ";
   }
-
-  createHeap( * arr, 25);
+  
+  createHeap( * arr, 10);
   cout << " HEAP CREATED " << endl;
 
+
+findRatingBDS(*arr, 2.3, 5, 20);
+cout << endl << endl;
   for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); i++) {
-    cout << arr[i] -> getTitle() << " ";
+   cout << arr[i] -> getTitle() << " ";
   }
 
   return 0;
@@ -55,4 +60,80 @@ void createHeap(Movie_Vertex * arr, int x) {
   for (int j = firstIndex; j >= 0; j--) {
     heapify(arr, x, j);
   }
+}
+
+
+vector<Movie_Vertex*> findRatingBDS(Movie_Vertex* arr, double min, double max, int size) {
+    vector<Movie_Vertex*> checkedVerts;
+    vector<Movie_Vertex*> queuedVerts;
+    vector<Movie_Vertex*> matches;
+
+    checkedVerts.push_back(&arr[0]);
+    queuedVerts.push_back(&arr[0]);
+
+    cout << "Traversing... ";
+    while (queuedVerts.size() > 0)
+    {
+        // Pull movie vertex to be checked
+        Movie_Vertex* vert = queuedVerts[0];
+        // Remove it from vector of vertices to check
+        queuedVerts.erase(queuedVerts.begin());
+        cout << vert->getTitle() << " ";
+        
+        int idx;
+        // Get all edges of the currently checked movie vertex
+        for(int i = 0; i < size; i++)
+        {
+            if(arr[i].getTitle().compare(vert->getTitle()) == 0)
+            {
+                idx = i;
+                break;
+            }
+        }
+
+            // Determine if the adjacent movie has been traversed before
+           bool leftChecked = false;
+           bool rightChecked = false;
+            for (Movie_Vertex* movie : checkedVerts)
+            {
+                if(idx * 2 < size)
+                {
+                    if (movie->getTitle().compare(arr[idx*2+2].getTitle()) == 0 || idx * 2 > size)
+                    {
+                    rightChecked = true;
+                    }
+                if(movie->getTitle().compare(arr[idx*2+1].getTitle()) == 0 || idx * 2 > size)
+                    {
+                    leftChecked = true;
+                    } 
+                }
+                else
+                {
+                    rightChecked = true;
+                    leftChecked = true;
+                }
+
+            }
+            
+            // Add this adjacent movie vertex to be checked since it hasn't been traversed
+            if (!rightChecked)
+            {
+                checkedVerts.push_back(&arr[idx*2+2]);
+                queuedVerts.push_back(&arr[idx*2+2]);
+            }
+            if(!leftChecked)
+            {
+                checkedVerts.push_back(&arr[idx*2+1]);
+                queuedVerts.push_back(&arr[idx*2+1]);
+            }
+
+        cout << "SIZE: " << queuedVerts.size() << endl;
+        if (vert->getRating() <= max && vert->getRating() >= min)
+        {
+            cout << " Match Found!" << endl;
+            matches.push_back(vert);
+        }
+    }
+    
+    return matches; 
 }
