@@ -31,7 +31,7 @@ int main()
     vector<Movie_Vertex> movieList;
 
     /*going through input files line by line, still have to create graph object in order to store movie vertices*/
-    for (int i = 0; i < 50; i++) 
+    for (int i = 0; i < 100; i++) 
     {
 
         //get index of movie
@@ -81,7 +81,7 @@ int main()
     }
 
     //format for user input
-    cout << "Welcome to the Movie Carosel!\n\n";
+    cout << "Welcome to the Movie Carousel!\n\n";
 
     bool movieFound = false;
 
@@ -272,8 +272,9 @@ int main()
 
     }
 
-    cout << "\nThanks for riding the movie carosel!" << endl;
+    cout << "\nThanks for riding the Movie Carousel!" << endl;
 
     return 0;
 
 }
+
